@@ -2,6 +2,7 @@ package com.wanted.recruitment.setup;
 
 import java.time.LocalDateTime;
 
+import com.wanted.recruitment.Apply.domain.entity.Apply;
 import com.wanted.recruitment.Employment.domain.entity.Employment;
 import com.wanted.recruitment.User.domain.entity.Company;
 import com.wanted.recruitment.User.domain.entity.User;
@@ -46,6 +47,14 @@ public class MockEntityFactory {
 			.skill("Java")
 			.startDate(LocalDateTime.now())
 			.endDate(LocalDateTime.now().plusDays(10))
+			.build();
+	}
+
+	// Apply
+	public static Apply createMockApply() {
+		return Apply.builder()
+			.user(createMockUser())
+			.employment(createMockEmployment())
 			.build();
 	}
 }
