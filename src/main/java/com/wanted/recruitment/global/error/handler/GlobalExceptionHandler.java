@@ -1,5 +1,7 @@
 package com.wanted.recruitment.global.error.handler;
 
+import java.util.Objects;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -29,6 +31,14 @@ public class GlobalExceptionHandler {
 		if (code == 500)
 			e.printStackTrace();
 
+		return ResponseEntity.status(code).body(ResponseDto.of(code, message));
+	}
+
+	// HttpMessageNotReadableException
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<ResponseDto> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+		int code = HttpStatus.BAD_REQUEST.value();
+		String message = Objects.requireNonNull(e.getRootCause()).getMessage();
 		return ResponseEntity.status(code).body(ResponseDto.of(code, message));
 	}
 

@@ -22,7 +22,7 @@ public class UserService {
 	public User checkCompanyUserIsValidate(Long userId) {
 		// 유효한 사용자인지 체크
 		User companyUser = userRepository.findById(userId)
-			.orElseThrow(() -> new AppException(UserErrorCode.AUTHORIZATION_FAILED));
+			.orElseThrow(() -> new AppException(UserErrorCode.USER_NOT_EXIST));
 
 		// 사용자 타입이 회사인지 체크
 		if (!companyUser.getUserType().equals(UserType.COMPANY)) {
