@@ -36,4 +36,18 @@ public class UserService {
 
 		return companyUser;
 	}
+
+	@Transactional(readOnly = true)
+	public User checkUserIsValidate(Long userId) {
+		// 유효한 사용자인지 체크
+		User companyUser = userRepository.findById(userId)
+			.orElseThrow(() -> new AppException(UserErrorCode.USER_NOT_EXIST));
+
+		// 사용자 타입이 일반 사용자인지 체크
+		if (!companyUser.getUserType().equals(UserType.USER)) {
+			throw new AppException(UserErrorCode.CAN_NOT_ACCESS_TO_USER_TYPE);
+		}
+
+		return companyUser;
+	}
 }
