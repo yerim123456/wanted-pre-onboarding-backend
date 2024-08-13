@@ -75,6 +75,11 @@ public class Employment extends BaseTime {
 		this.endDate = employmentReqDto.getEndDate();
 	}
 
+	public void updateDate(LocalDateTime startDate, LocalDateTime endDate){
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

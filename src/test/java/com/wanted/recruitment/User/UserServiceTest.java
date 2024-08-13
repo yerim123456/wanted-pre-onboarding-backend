@@ -36,7 +36,7 @@ class UserServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		mockCompanyUser = MockEntityFactory.createMockCompanyUser("Wanted");
+		mockCompanyUser = MockEntityFactory.createMockCompanyUser();
 		mockUser = MockEntityFactory.createMockUser();
 	}
 
@@ -48,7 +48,7 @@ class UserServiceTest {
 		@DisplayName("[성공] 사용자가 존재하며, 회사 정보가 존재하는 회사 사용자인 경우 유효성 검사에 성공한다")
 		void shouldNotThrowExceptionWhenCompanyUserValidate() {
 			// Given
-			given(userRepository.findById(1L)).willReturn(Optional.of(mockCompanyUser));
+			given(userRepository.findById(anyLong())).willReturn(Optional.of(mockCompanyUser));
 
 			// When
 			User result = userService.checkCompanyUserIsValidate(1L);
@@ -61,7 +61,7 @@ class UserServiceTest {
 		@DisplayName("[실패] 사용자 미존재로 인해 예외를 발생시킨다.")
 		void shouldThrowExceptionWhenUserNotFound() {
 			// Given
-			given(userRepository.findById(1L)).willReturn(Optional.empty());
+			given(userRepository.findById(anyLong())).willReturn(Optional.empty());
 
 			// When & Then
 			AppException exception = assertThrows(AppException.class,
@@ -73,7 +73,7 @@ class UserServiceTest {
 		@DisplayName("[실패] 사용자 타입이 회사가 아니기에 예외를 발생시킨다.")
 		void shouldThrowExceptionWhenUserTypeIsNotCompany() {
 			// Given
-			given(userRepository.findById(1L)).willReturn(Optional.of(mockUser));
+			given(userRepository.findById(anyLong())).willReturn(Optional.of(mockUser));
 
 			// When & Then
 			AppException exception = assertThrows(AppException.class,
@@ -86,12 +86,42 @@ class UserServiceTest {
 		void shouldThrowExceptionWhenCompanyIsNotExist() {
 			// Given
 			mockCompanyUser.updateUserTypeToCompany(null);
-			given(userRepository.findById(1L)).willReturn(Optional.of(mockCompanyUser));
+			given(userRepository.findById(anyLong())).willReturn(Optional.of(mockCompanyUser));
 
 			// When & Then
 			AppException exception = assertThrows(AppException.class,
 				() -> userService.checkCompanyUserIsValidate(1L));
 			assertEquals(UserErrorCode.COMPANY_NOT_EXIST, exception.getErrorCode());
+		}
+	}
+
+	@Nested
+	@DisplayName("일반 사용자 유효성 검사")
+	class ValidateUserTest {
+
+		@Test
+		@DisplayName("[성공] 사용자가 존재하며, 일반 사용자인 경우 유효성 검사에 성공한다")
+		void shouldNotThrowExceptionWhenUserValidate() {
+			// Given
+			given(userRepository.findById(anyLong())).willReturn(Optional.of(mockUser));
+
+			// When
+			User result = userService.checkUserIsValidate(1L);
+
+			// Then
+			assertEquals(mockUser, result);
+		}
+
+		@Test
+		@DisplayName("[실패] 사용자 타입이 사용자가 아니기에 예외를 발생시킨다.")
+		void shouldThrowExceptionWhenUserTypeIsNotCompany() {
+			// Given
+			given(userRepository.findById(anyLong())).willReturn(Optional.of(mockCompanyUser));
+
+			// When & Then
+			AppException exception = assertThrows(AppException.class,
+				() -> userService.checkUserIsValidate(1L));
+			assertEquals(UserErrorCode.CAN_NOT_ACCESS_TO_USER_TYPE, exception.getErrorCode());
 		}
 	}
 }

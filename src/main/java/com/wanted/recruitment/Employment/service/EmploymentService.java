@@ -1,5 +1,6 @@
 package com.wanted.recruitment.Employment.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -31,6 +32,11 @@ public class EmploymentService {
 		// 회사인 사용자 유효성 체크
 		User companyUser = userService.checkCompanyUserIsValidate(userId);
 
+		// 시작 날짜, 끝 날짜 기간 유효성 체크
+		if(employmentReqDto.getStartDate().isAfter(employmentReqDto.getEndDate())){
+			throw new AppException(EmploymentErrorCode.INVALID_DATE_PERIOD);
+		}
+
 		// 채용공고 중복 여부 확인
 		if (employmentRepository.existsByCompanyAndPositionAndActive(companyUser.getCompany(),
 			employmentReqDto.getPosition())) {
@@ -55,6 +61,11 @@ public class EmploymentService {
 	public void updateEmployment(Long userId, Long employmentId, EmploymentReqDto employmentReqDto) {
 		// 회사인 사용자 유효성 체크
 		User companyUser = userService.checkCompanyUserIsValidate(userId);
+
+		// 시작 날짜, 끝 날짜 기간 유효성 체크
+		if(employmentReqDto.getStartDate().isAfter(employmentReqDto.getEndDate())){
+			throw new AppException(EmploymentErrorCode.INVALID_DATE_PERIOD);
+		}
 
 		// 채용공고 및 회사 권한 유효성 체크
 		Employment employment = checkEmploymentAndCompanyIsValidate(employmentId, companyUser);
@@ -88,7 +99,7 @@ public class EmploymentService {
 
 	// 채용공고 키워드 검색
 	@Transactional(readOnly = true)
-	public List<EmploymentItemResDto> readEmploymentsByKeyword(String keyword) {
+	public List<EmploymentItemResDto> searchEmploymentsByKeyword(String keyword) {
 		return employmentRepository.searchEmploymentItemsOrderByKeywordFrequency(keyword)
 			.orElseThrow(() -> new AppException(EmploymentErrorCode.KEYWORD_EMPLOYMENT_LIST_NOT_EXIST));
 	}
@@ -106,15 +117,34 @@ public class EmploymentService {
 		return employmentDetailResDto;
 	}
 
-	private Employment checkEmploymentAndCompanyIsValidate(Long employmentId, User companyUser) {
-		// 해당 채용공고 존재 확인
+	// 회사 채용공고 유효성 확인
+	@Transactional(readOnly = true)
+	public Employment checkEmploymentAndCompanyIsValidate(Long employmentId, User companyUser) {
+		// 유효한 채용공고인지 확인
 		Employment employment = employmentRepository.findById(employmentId)
 			.orElseThrow(() -> new AppException(EmploymentErrorCode.EMPLOYMENT_NOT_EXIST));
 
 		// 해당 회사 채용공고인지 확인
-		if (companyUser.getCompany() == employment.getCompany()) {
+		if (!employment.getCompany().equals(companyUser.getCompany())) {
 			throw new AppException(EmploymentErrorCode.INVALID_ACCESS_TO_EMPLOYMENT);
 		}
+
+		return employment;
+	}
+
+	// 채용공고 지원 유효성 확인
+	@Transactional(readOnly = true)
+	public Employment checkEmploymentIsValidate(Long employmentId){
+		// 유효한 채용공고인지 확인
+		Employment employment = employmentRepository.findById(employmentId)
+			.orElseThrow(() -> new AppException(EmploymentErrorCode.EMPLOYMENT_NOT_EXIST));
+
+		// 현재 날짜가 채용공고의 시작날짜와 마감날짜 사이인지 확인
+		LocalDateTime now = LocalDateTime.now();
+		if (now.isBefore(employment.getStartDate()) || now.isAfter(employment.getEndDate())) {
+			throw new AppException(EmploymentErrorCode.INVALID_EMPLOYMENT_APPLY_PERIOD);
+		}
+
 		return employment;
 	}
 

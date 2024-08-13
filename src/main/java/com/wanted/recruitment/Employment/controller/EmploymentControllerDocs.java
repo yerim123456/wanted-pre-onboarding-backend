@@ -39,8 +39,9 @@ public interface EmploymentControllerDocs {
 					"{ \"code\": 400, \"message\": \"채용하는 직책 입력이 필요합니다.\" }," +
 					"{ \"code\": 400, \"message\": \"채용공고 내용은 10000자 이하여야 합니다.\" }," +
 					"{ \"code\": 400, \"message\": \"기술은 500자 이하여야 합니다.\" }," +
+					"{ \"code\": 400, \"message\": \"시작 일시는 마감 일시보다 이전이거나 같아야 합니다.\" }," +
 					"{ \"code\": 400, \"message\": \"채용 시작일 입력이 필요합니다.\" }," +
-					"{ \"code\": 400, \"message\": \"채용 마감일 입력이 필요합니다.\" }," +
+					"{ \"code\": 400, \"message\": \"채용 마감일 입력이 필요합니다.\" }" +
 					"]"
 				)
 			)
@@ -60,7 +61,7 @@ public interface EmploymentControllerDocs {
 			)
 		)
 	})
-	ResponseEntity<ResponseDto> createEmployment(@RequestParam Long userId,
+	ResponseEntity<ResponseDto> saveEmployment(@RequestParam Long userId,
 		@RequestBody @Valid EmploymentReqDto employmentReqDto);
 
 	@Operation(summary = "채용공고 수정", description = "채용공고 ID를 기반으로 채용공고를 수정합니다.")
@@ -83,8 +84,9 @@ public interface EmploymentControllerDocs {
 					"{ \"code\": 400, \"message\": \"채용하는 직책 입력이 필요합니다.\" }," +
 					"{ \"code\": 400, \"message\": \"채용공고 내용은 10000자 이하여야 합니다.\" }," +
 					"{ \"code\": 400, \"message\": \"기술은 500자 이하여야 합니다.\" }," +
+					"{ \"code\": 400, \"message\": \"시작 일시는 마감 일시보다 이전이거나 같아야 합니다.\" }," +
 					"{ \"code\": 400, \"message\": \"채용 시작일 입력이 필요합니다.\" }," +
-					"{ \"code\": 400, \"message\": \"채용 마감일 입력이 필요합니다.\" }," +
+					"{ \"code\": 400, \"message\": \"채용 마감일 입력이 필요합니다.\" }" +
 					"]"
 				)
 			)
@@ -154,7 +156,7 @@ public interface EmploymentControllerDocs {
 		)
 	)
 	})
-	ResponseEntity<ResponseDto> getAllEmployments();
+	ResponseEntity<ResponseDto> readAllEmployments();
 
 	@Operation(summary = "채용공고 키워드 검색", description = "키워드를 통해 채용공고를 검색합니다.")
 	@ApiResponses({
@@ -188,6 +190,6 @@ public interface EmploymentControllerDocs {
 			)
 		)
 	})
-	ResponseEntity<ResponseDto> getEmploymentDetail(@PathVariable Long employmentId);
+	ResponseEntity<ResponseDto> readEmploymentDetail(@PathVariable Long employmentId);
 
 }
