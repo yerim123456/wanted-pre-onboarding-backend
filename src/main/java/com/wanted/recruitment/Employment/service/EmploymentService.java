@@ -106,15 +106,16 @@ public class EmploymentService {
 		return employmentDetailResDto;
 	}
 
-	private Employment checkEmploymentAndCompanyIsValidate(Long employmentId, User companyUser) {
+	public Employment checkEmploymentAndCompanyIsValidate(Long employmentId, User companyUser) {
 		// 해당 채용공고 존재 확인
 		Employment employment = employmentRepository.findById(employmentId)
 			.orElseThrow(() -> new AppException(EmploymentErrorCode.EMPLOYMENT_NOT_EXIST));
 
 		// 해당 회사 채용공고인지 확인
-		if (companyUser.getCompany() == employment.getCompany()) {
+		if (!employment.getCompany().equals(companyUser.getCompany())) {
 			throw new AppException(EmploymentErrorCode.INVALID_ACCESS_TO_EMPLOYMENT);
 		}
+
 		return employment;
 	}
 
