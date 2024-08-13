@@ -62,6 +62,11 @@ public class User extends BaseTime {
 		this.userType = UserType.USER;
 	}
 
+	public void updateUserTypeToUser() {
+		this.userType = UserType.USER;
+		this.company = null;
+	}
+
 	public void updateUserTypeToCompany(Company company) {
 		this.userType = UserType.COMPANY;
 		this.company = company;
