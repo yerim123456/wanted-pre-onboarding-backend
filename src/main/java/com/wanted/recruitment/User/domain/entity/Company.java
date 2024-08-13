@@ -44,6 +44,10 @@ public class Company extends BaseTime {
 		this.region = region;
 	}
 
+	public void updateName(String name){
+		this.name = name;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

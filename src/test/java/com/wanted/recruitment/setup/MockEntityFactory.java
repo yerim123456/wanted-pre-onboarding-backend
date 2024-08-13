@@ -10,22 +10,22 @@ import com.wanted.recruitment.User.domain.entity.User;
 public class MockEntityFactory {
 
 	// Company
-	public static Company createMockCompany(String companyName) {
+	public static Company createMockCompany() {
 		return Company.builder()
-			.name(companyName)
+			.name("Wanted")
 			.country("South Korea")
 			.region("Seoul")
 			.build();
 	}
 
 	// Company Type User
-	public static User createMockCompanyUser(String companyName) {
+	public static User createMockCompanyUser() {
 		User companyUser = User.builder()
 			.email("wantedAdmin01@wanted.com")
 			.nickname("wantedAdmin01")
 			.profileImagePath("https://img-url.com")
 			.build();
-		companyUser.updateUserTypeToCompany(createMockCompany(companyName));
+		companyUser.updateUserTypeToCompany(createMockCompany());
 		return companyUser;
 	}
 
@@ -39,9 +39,9 @@ public class MockEntityFactory {
 	}
 
 	// Employment
-	public static Employment createMockEmployment(String companyName) {
+	public static Employment createMockEmployment() {
 		return Employment.builder()
-			.company(createMockCompany(companyName))
+			.company(createMockCompany())
 			.position("Backend Developer")
 			.content("Job Content")
 			.skill("Java")
