@@ -20,7 +20,6 @@ import com.wanted.recruitment.Employment.service.EmploymentService;
 import com.wanted.recruitment.global.common.DataResponseDto;
 import com.wanted.recruitment.global.common.ResponseDto;
 
-import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -32,7 +31,7 @@ public class EmploymentController implements EmploymentControllerDocs {
 
 	// 채용공고 등록
 	@PostMapping
-	public ResponseEntity<ResponseDto> createEmployment(@RequestParam Long userId,
+	public ResponseEntity<ResponseDto> saveEmployment(@RequestParam Long userId,
 		@RequestBody @Valid EmploymentReqDto employmentReqDto) {
 		employmentService.saveEmployment(userId, employmentReqDto);
 		return ResponseEntity.ok(ResponseDto.of(201));
@@ -55,7 +54,7 @@ public class EmploymentController implements EmploymentControllerDocs {
 
 	// 채용공고 전체 조회
 	@GetMapping
-	public ResponseEntity<ResponseDto> getAllEmployments() {
+	public ResponseEntity<ResponseDto> readAllEmployments() {
 		List<EmploymentItemResDto> employmentItemResDtos = employmentService.readAllEmploymentDesc();
 		return ResponseEntity.status(200).body(DataResponseDto.of(employmentItemResDtos, 200));
 	}
@@ -63,13 +62,13 @@ public class EmploymentController implements EmploymentControllerDocs {
 	// 채용공고 키워드 검색
 	@GetMapping("/search")
 	public ResponseEntity<ResponseDto> searchEmployments(@RequestParam String keyword) {
-		List<EmploymentItemResDto> employmentItemResDtos = employmentService.readEmploymentsByKeyword(keyword);
+		List<EmploymentItemResDto> employmentItemResDtos = employmentService.searchEmploymentsByKeyword(keyword);
 		return ResponseEntity.status(200).body(DataResponseDto.of(employmentItemResDtos, 200));
 	}
 
 	// 채용공고 상세 조회
 	@GetMapping("/{employmentId}")
-	public ResponseEntity<ResponseDto> getEmploymentDetail(@PathVariable Long employmentId) {
+	public ResponseEntity<ResponseDto> readEmploymentDetail(@PathVariable Long employmentId) {
 		EmploymentDetailResDto employmentDetailResDto = employmentService.readEmploymentDetail(employmentId);
 		return ResponseEntity.status(200).body(DataResponseDto.of(employmentDetailResDto, 200));
 	}
