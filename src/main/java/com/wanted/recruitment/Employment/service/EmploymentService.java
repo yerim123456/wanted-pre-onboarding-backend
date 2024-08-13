@@ -1,5 +1,6 @@
 package com.wanted.recruitment.Employment.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -114,6 +115,22 @@ public class EmploymentService {
 		// 해당 회사 채용공고인지 확인
 		if (!employment.getCompany().equals(companyUser.getCompany())) {
 			throw new AppException(EmploymentErrorCode.INVALID_ACCESS_TO_EMPLOYMENT);
+		}
+
+		return employment;
+	}
+
+	// 채용공고 지원 유효성 확인
+	@Transactional(readOnly = true)
+	public Employment checkEmploymentIsValidate(Long employmentId){
+		// 유효한 채용공고인지 확인
+		Employment employment = employmentRepository.findById(employmentId)
+			.orElseThrow(() -> new AppException(EmploymentErrorCode.EMPLOYMENT_NOT_EXIST));
+
+		// 현재 날짜가 채용공고의 시작날짜와 마감날짜 사이인지 확인
+		LocalDateTime now = LocalDateTime.now();
+		if (now.isBefore(employment.getStartDate()) || now.isAfter(employment.getEndDate())) {
+			throw new AppException(EmploymentErrorCode.INVALID_EMPLOYMENT_APPLY_PERIOD);
 		}
 
 		return employment;
